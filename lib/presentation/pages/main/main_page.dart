@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import '../../bloc/bookings/bookings_cubit.dart';
 import '../../widgets/app_bottom_navigation_bar.dart';
 import '../about/about_page.dart';
+import '../booking_scan/booking_scan_page.dart';
 import '../bookings/bookings_page.dart';
 
 final getIt = GetIt.instance;
@@ -30,10 +31,10 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         body: PageView(
           controller: _pageController,
-          children: [
-            const BookingsPage(),
-            Scaffold(),
-            const AboutPage(),
+          children: const [
+            BookingsPage(),
+            BookingScanPage(),
+            AboutPage(),
           ],
         ),
         bottomNavigationBar: AppBottomNavigationBar(

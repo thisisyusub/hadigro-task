@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../bloc/login/login_cubit.dart';
+import '../../bloc/router/router_cubit.dart';
+import '../../widgets/loading_view.dart';
+import '../main/main_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,48 +24,72 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: _email,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintText: localizations.email,
-                  ),
+    return BlocConsumer<LoginCubit, LoginState>(
+      listener: (context, state) {
+        if (state.isFailure) {
+          ScaffoldMessenger.of(context)
+            ..removeCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                content: Text(
+                  state.error ?? localizations.errorOccured,
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _password,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintText: localizations.password,
-                  ),
+              ),
+            );
+        } else if (state.isSuccess) {
+          context.read<RouterCubit>().pushReplacement(const MainPage());
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: SafeArea(
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: _email,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: localizations.email,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _password,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: localizations.password,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    if (state.isInProgress)
+                      const LoadingView()
+                    else
+                      CupertinoButton(
+                        color: Colors.blue,
+                        child: Text(
+                          localizations.login,
+                        ),
+                        onPressed: () {
+                          context.read<LoginCubit>().login(
+                                _email.text,
+                                _password.text,
+                              );
+                        },
+                      ),
+                  ],
                 ),
-                const SizedBox(height: 32),
-                CupertinoButton(
-                  color: Colors.blue,
-                  child: Text(
-                    localizations.login,
-                  ),
-                  onPressed: () {
-                    context.read<LoginCubit>().login(
-                          _email.text,
-                          _password.text,
-                        );
-                  },
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
