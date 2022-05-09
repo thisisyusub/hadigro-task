@@ -10,6 +10,14 @@ abstract class Endpoints {
 
   static const login = '/login';
   static const bookings = '/bookings';
+
+  static String bookingDetails(String bookingCode) {
+    return '$bookings/$bookingCode';
+  }
+
+  static String useBooking(String bookingCode) {
+    return '$bookings/$bookingCode/use';
+  }
 }
 
 abstract class Queries {}

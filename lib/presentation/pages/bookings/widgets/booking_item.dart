@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../domain/entities/booking.dart';
-import '../../../bloc/booking_details/booking_details_cubit.dart';
-import '../../../bloc/router/router_cubit.dart';
-import '../../booking_details/booking_details_page.dart';
+import '../../../app_router.dart';
 
 class BookingItem extends StatelessWidget {
   const BookingItem({
@@ -30,15 +27,14 @@ class BookingItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               child: InkWell(
                 onTap: () {
-                  context.read<RouterCubit>().push(
-                        BlocProvider(
-                          create: (_) =>
-                              GetIt.instance.get<BookingDetailsCubit>(
-                            param1: booking.code,
-                          )..fetchBookingDetails(),
-                          child: const BookingDetailPage(),
-                        ),
-                      );
+                  appRouter.push(
+                    context.namedLocation(
+                      AppRoutes.bookingDetails,
+                      queryParams: {
+                        'bookingCode': booking.code,
+                      },
+                    ),
+                  );
                 },
                 borderRadius: BorderRadius.circular(16.0),
                 child: Padding(

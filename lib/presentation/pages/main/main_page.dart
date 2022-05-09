@@ -11,14 +11,37 @@ import '../bookings/bookings_page.dart';
 final getIt = GetIt.instance;
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
+
+  final int index;
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  final _pageController = PageController();
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pageController = PageController(initialPage: widget.index);
+  }
+
+  @override
+  void didUpdateWidget(covariant MainPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    _pageController.animateToPage(
+      widget.index,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.linear,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,5 +65,11 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }

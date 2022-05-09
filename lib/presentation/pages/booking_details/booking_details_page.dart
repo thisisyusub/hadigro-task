@@ -5,9 +5,16 @@ import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../bloc/booking_details/booking_details_cubit.dart';
+import '../../bloc/use_booking/use_booking_cubit.dart';
+import '../../widgets/loading_view.dart';
 
 class BookingDetailPage extends StatelessWidget {
-  const BookingDetailPage({Key? key}) : super(key: key);
+  const BookingDetailPage({
+    Key? key,
+    this.showSetToUseButton = false,
+  }) : super(key: key);
+
+  final bool showSetToUseButton;
 
   @override
   Widget build(BuildContext context) {
@@ -28,59 +35,96 @@ class BookingDetailPage extends StatelessWidget {
       const style = TextStyle(fontSize: 16);
 
       child = SingleChildScrollView(
-        child: Card(
-          margin: const EdgeInsets.all(16.0),
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  '${localizations.code}: ${booking.code}',
-                  style: style,
+        child: Column(
+          children: [
+            Card(
+              margin: const EdgeInsets.all(16.0),
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      '${localizations.code}: ${booking.code}',
+                      style: style,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${localizations.price}: ${booking.totalPrice}',
+                      style: style,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${localizations.createdAt}: ${DateFormat.yMMMMd().format(
+                        (booking.createdAt),
+                      )}',
+                      style: style,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${localizations.status}: ${booking.status}',
+                      style: style,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${localizations.used}: ${booking.used}',
+                      style: style,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${localizations.userId}: ${booking.userId}',
+                      style: style,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  '${localizations.price}: ${booking.totalPrice}',
-                  style: style,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '${localizations.createdAt}: ${DateFormat.yMMMMd().format(
-                    (booking.createdAt),
-                  )}',
-                  style: style,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '${localizations.status}: ${booking.status}',
-                  style: style,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '${localizations.used}: ${booking.used}',
-                  style: style,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '${localizations.userId}: ${booking.userId}',
-                  style: style,
-                ),
-              ],
+              ),
             ),
-          ),
+            if (showSetToUseButton)
+              BlocConsumer<UseBookingCubit, UseBookingState>(
+                listener: (context, state) {
+                  if (state.isFailure) {}
+                },
+                builder: (context, state) {
+                  if (state.isInProgress) {
+                    return const LoadingView();
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(
+                          double.infinity,
+                          50,
+                        ),
+                        primary: AppColors.primary,
+                      ),
+                      onPressed: () {
+                        context.read<UseBookingCubit>().changeStatusToUsed();
+                      },
+                      child: Text(localizations.markAsUsed),
+                    ),
+                  );
+                },
+              ),
+          ],
         ),
       );
     } else {
       child = const SizedBox.shrink();
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.details),
-        backgroundColor: AppColors.primary,
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(localizations.details),
+          backgroundColor: AppColors.primary,
+        ),
+        body: child,
       ),
-      body: child,
     );
   }
 }

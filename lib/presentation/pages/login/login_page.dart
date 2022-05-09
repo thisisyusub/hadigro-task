@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../app_router.dart';
 import '../../bloc/login/login_cubit.dart';
-import '../../bloc/router/router_cubit.dart';
 import '../../widgets/loading_view.dart';
-import '../main/main_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -39,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
         } else if (state.isSuccess) {
-          context.read<RouterCubit>().pushReplacement(const MainPage());
+          appRouter.go(AppRoutes.bookings);
         }
       },
       builder: (context, state) {

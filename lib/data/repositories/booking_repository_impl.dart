@@ -37,13 +37,21 @@ class BookingRepositoryImpl implements BookingRepository {
       return Success(
         await bookingRemoteDataSource.fetchBookingDetails(code),
       );
-    } on DioError catch (e) {
-      if (e.response?.data != null) {
-        final response = GenericResponseModel.fromJson(e.response!.data);
-        return Error(Failure.network(response.message));
-      } else {
-        return const Error(Failure.network());
-      }
+    } on DioError {
+      return const Error(Failure.network());
+    } catch (_) {
+      return const Error(Failure.other());
+    }
+  }
+
+  @override
+  Future<Either<Failure, GenericResponse<Booking>>> useBooking(
+    String code,
+  ) async {
+    try {
+      return Success(await bookingRemoteDataSource.useBooking(code));
+    } on DioError {
+      return const Error(Failure.network());
     } catch (_) {
       return const Error(Failure.other());
     }

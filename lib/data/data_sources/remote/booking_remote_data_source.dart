@@ -8,6 +8,8 @@ abstract class BookingRemoteDataSource {
   Future<GenericResponseModel<List<BookingModel>>> fetchBookings();
 
   Future<GenericResponseModel<BookingModel>> fetchBookingDetails(String code);
+
+  Future<GenericResponseModel<BookingModel>> useBooking(String code);
 }
 
 class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
@@ -30,8 +32,18 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     String code,
   ) async {
     final response = await dio.get(
-      '${Endpoints.bookings}/$code',
+      Endpoints.bookingDetails(code),
     );
+
+    return GenericResponseModel.fromJson(
+      response.data,
+      dataFromJson: BookingModel.fromJson,
+    );
+  }
+
+  @override
+  Future<GenericResponseModel<BookingModel>> useBooking(String code) async {
+    final response = await dio.get(Endpoints.useBooking(code));
 
     return GenericResponseModel.fromJson(
       response.data,

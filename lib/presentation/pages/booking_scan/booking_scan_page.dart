@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+
+import '../../app_router.dart';
 
 class BookingScanPage extends StatefulWidget {
   const BookingScanPage({Key? key}) : super(key: key);
@@ -36,6 +39,19 @@ class _BookingScanPageState extends State<BookingScanPage> {
 
         _qrViewController?.scannedDataStream.listen(
           (event) {
+            if (event.code != null) {
+              _qrViewController?.pauseCamera();
+
+              appRouter.push(
+                context.namedLocation(
+                  AppRoutes.bookingDetails,
+                  queryParams: {
+                    'bookingCode': event.code!,
+                  },
+                ),
+              );
+            }
+
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(

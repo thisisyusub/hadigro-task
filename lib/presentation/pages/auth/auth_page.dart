@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
+import '../../app_router.dart';
 import '../../bloc/auth/auth_cubit.dart';
-import '../../bloc/login/login_cubit.dart';
-import '../../bloc/router/router_cubit.dart';
-import '../login/login_page.dart';
-import '../main/main_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -16,14 +12,9 @@ class AuthPage extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state == AuthState.authenticated) {
-          context.read<RouterCubit>().pushReplacement(const MainPage());
+          appRouter.go(AppRoutes.bookings);
         } else if (state == AuthState.unauthenticated) {
-          context.read<RouterCubit>().pushReplacement(
-                BlocProvider(
-                  create: (_) => GetIt.instance.get<LoginCubit>(),
-                  child: const LoginPage(),
-                ),
-              );
+          appRouter.go(AppRoutes.login);
         }
       },
       builder: (context, state) {

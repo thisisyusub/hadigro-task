@@ -9,4 +9,6 @@ abstract class BookingRepository {
   Future<Either<Failure, GenericResponse<Booking>>> fetchBookingDetails(
     String code,
   );
+
+  Future<Either<Failure, GenericResponse<Booking>>> useBooking(String code);
 }
