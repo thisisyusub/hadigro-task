@@ -47,6 +47,7 @@ class _BookingScanPageState extends State<BookingScanPage> {
                   AppRoutes.bookingDetails,
                   queryParams: {
                     'bookingCode': event.code!,
+                    'showUseButton': '',
                   },
                 ),
               );
