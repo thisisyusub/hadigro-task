@@ -82,7 +82,27 @@ class BookingDetailPage extends StatelessWidget {
             if (showSetToUseButton)
               BlocConsumer<UseBookingCubit, UseBookingState>(
                 listener: (context, state) {
-                  if (state.isFailure) {}
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+                  if (state.isFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.red,
+                        behavior: SnackBarBehavior.floating,
+                        content: Text(localizations.errorOccured),
+                      ),
+                    );
+                  } else if (state.isSuccess) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
+                        content: Text(
+                          localizations.successfullyCompleted,
+                        ),
+                      ),
+                    );
+                  }
                 },
                 builder: (context, state) {
                   if (state.isInProgress) {
